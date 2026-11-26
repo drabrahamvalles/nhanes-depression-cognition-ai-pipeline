@@ -1,8 +1,15 @@
 # Depressive symptoms and cognitive function in older adults
 
+## About this repository
+
+This project was built in about one hour with an agentic AI workflow (OpenAI Codex as the
+coding agent and Anthropic Claude as the reviewer). I defined the research question, reviewed
+and approved each analytic decision, and verified the results. AGENTS.md contains the
+instructions the AI agent followed.
+
 Are greater depressive symptoms associated with poorer cognitive test performance among U.S. adults aged 60 years or older?
 
-[Read the full report](https://drabrahamvalles.github.io/nhanes-depression-cognition/)
+[Read the full report](https://drabrahamvalles.github.io/nhanes-depression-cognition-ai-pipeline/) · [View the GitHub repository](https://github.com/drabrahamvalles/nhanes-depression-cognition-ai-pipeline)
 
 ## Data and methods
 

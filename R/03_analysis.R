@@ -112,7 +112,8 @@ dir.create("output", showWarnings = FALSE)
 saveRDS(table_1, "output/table_1.rds")
 write.csv(table_1, "output/table_1.csv", row.names = FALSE, na = "", fileEncoding = "UTF-8")
 saveRDS(regression_results, "output/regression_results.rds")
-write.csv(regression_display, "output/regression_results.csv", row.names = FALSE,
+# Export numeric p-values so the CSV retains precision for reuse.
+write.csv(regression_results, "output/regression_results.csv", row.names = FALSE,
           fileEncoding = "UTF-8")
 saveRDS(cognitive_means, "data/cognitive_means.rds")
 
