@@ -22,7 +22,7 @@ Cognitive performance in older adulthood spans several domains, including memory
 
 ### Data and analytic sample
 
-We pooled the public 2011–2012 and 2013–2014 NHANES cycles. Within each cycle, we linked the demographics, depression screener, and cognitive functioning files by participant identifier (`SEQN`). We used the demographics file as the starting sample and retained every participant in the cleaned dataset. [NHANES demographics files](https://wwwn.cdc.gov/Nchs/Nhanes/Search/DataPage.aspx?Component=Demographics) · [NHANES questionnaire files](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire)
+We pooled the public 2011–2012 and 2013–2014 NHANES cycles. Within each cycle, we linked the demographics, depression screener, and cognitive functioning files by participant identifier (`SEQN`). The cleaned dataset retained all 19,931 participants from the two demographics files so we could build the survey design using the full examination sample before restricting the analysis. [NHANES demographics files](https://wwwn.cdc.gov/Nchs/Nhanes/Search/DataPage.aspx?Component=Demographics) · [NHANES questionnaire files](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire)
 
 ### Sample flow
 
@@ -47,7 +47,7 @@ We analyzed four scores from three assessments. The Consortium to Establish a Re
 
 ### Survey design and statistical analysis
 
-We created a survey design in R with `survey::svydesign()` using masked primary sampling units (`SDMVPSU`), masked strata (`SDMVSTRA`), and four-year Mobile Examination Center weights (`WTMEC2YR / 2`), with `nest = TRUE`. We built the design on participants with valid examination weights and design variables, then used `subset()` on the design object for the analytic base sample and for each test-specific analysis. [CDC guidance on combining survey cycles](https://wwwn.cdc.gov/nchs/nhanes/tutorials/weighting.aspx)
+We created a survey design in R with `survey::svydesign()` using masked primary sampling units (`SDMVPSU`), masked strata (`SDMVSTRA`), and four-year Mobile Examination Center weights (`WTMEC2YR / 2`), with `nest = TRUE`. We built the design using all participants with positive examination weights and complete design variables. We then used `subset()` on the `svydesign` object to restrict the analysis to the analytic base sample and again to participants with a score on each test. This approach preserves the survey design information needed to estimate standard errors. [CDC guidance on combining survey cycles](https://wwwn.cdc.gov/nchs/nhanes/tutorials/weighting.aspx)
 
 We summarized participant characteristics with `gtsummary::tbl_svysummary()` and plotted survey-weighted means and 95% confidence intervals by PHQ-9 category. We fit a separate survey-weighted linear regression with `survey::svyglm()` for each test, adjusting for age in years, sex, education, and race and ethnicity. We report the adjusted difference in score per one-point higher PHQ-9, with a 95% Wald confidence interval and a two-sided p-value. [Documentation for survey-weighted regression](https://search.r-project.org/CRAN/refmans/survey/help/svyglm.html)
 
@@ -69,7 +69,7 @@ knitr::kable(table_1, format = "html", align = c("l", "r", "r", "r"))
 
 *Continuous variables are shown as weighted means (weighted standard deviations). Categorical variables are shown as unweighted counts (weighted column percentages). Header and missing-score counts are unweighted.*
 
-In the adjusted models, a higher PHQ-9 score was associated with lower scores on all four tests.
+The cognitive scores were kept in their original, unstandardized units. In the adjusted models, a one-point higher PHQ-9 score was associated with 0.068 fewer words on CERAD learning, 0.033 fewer words on CERAD delayed recall, 0.126 fewer animals named on animal fluency, and 0.601 fewer correctly matched symbols on the DSST.
 
 ::: {.table-responsive}
 
@@ -77,18 +77,28 @@ In the adjusted models, a higher PHQ-9 score was associated with lower scores on
 #| label: tbl-regressions
 #| tbl-cap: "Adjusted associations between PHQ-9 and cognitive test scores"
 regressions <- readRDS("../output/regression_results.rds")
+# Match each test to its original score unit by name.
+score_units <- c(
+  "CERAD learning" = "words",
+  "CERAD delayed recall" = "words",
+  "Animal fluency" = "animals",
+  "Digit Symbol Substitution Test" = "symbols"
+)
 regression_display <- data.frame(
   "Cognitive test" = regressions$test,
-  "Beta" = sprintf("%.3f", regressions$beta),
+  "β" = sprintf("%.3f", regressions$beta),
+  "Unit per 1-point higher PHQ-9" = unname(score_units[regressions$test]),
   "95% CI" = sprintf("%.3f to %.3f", regressions$ci_low, regressions$ci_high),
   "p-value" = ifelse(regressions$p < 0.001, "< 0.001", sprintf("%.3f", regressions$p)),
   "Unweighted n" = format(regressions$n, big.mark = ",", trim = TRUE),
   check.names = FALSE
 )
-knitr::kable(regression_display, format = "html", align = c("l", "r", "r", "r", "r"))
+knitr::kable(regression_display, format = "html", align = c("l", "r", "l", "r", "r", "r"))
 ```
 
 :::
+
+*Coefficients (β) and 95% confidence intervals are expressed in the original, unstandardized test-score units per 1-point higher PHQ-9.*
 
 ![Survey-weighted mean CERAD learning and delayed recall scores by PHQ-9 category. Vertical lines show 95% confidence intervals.](../figures/cerad_by_phq9.png){#fig-cerad fig-alt="Two panels show CERAD learning and delayed recall means with 95% confidence intervals across three PHQ-9 categories."}
 

@@ -2221,7 +2221,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="methods">Methods</h2>
 <section id="data-and-analytic-sample" class="level3">
 <h3 class="anchored" data-anchor-id="data-and-analytic-sample">Data and analytic sample</h3>
-<p>We pooled the public 2011–2012 and 2013–2014 NHANES cycles. Within each cycle, we linked the demographics, depression screener, and cognitive functioning files by participant identifier (<code>SEQN</code>). We used the demographics file as the starting sample and retained every participant in the cleaned dataset. <a href="https://wwwn.cdc.gov/Nchs/Nhanes/Search/DataPage.aspx?Component=Demographics">NHANES demographics files</a> · <a href="https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire">NHANES questionnaire files</a></p>
+<p>We pooled the public 2011–2012 and 2013–2014 NHANES cycles. Within each cycle, we linked the demographics, depression screener, and cognitive functioning files by participant identifier (<code>SEQN</code>). The cleaned dataset retained all 19,931 participants from the two demographics files so we could build the survey design using the full examination sample before restricting the analysis. <a href="https://wwwn.cdc.gov/Nchs/Nhanes/Search/DataPage.aspx?Component=Demographics">NHANES demographics files</a> · <a href="https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Questionnaire">NHANES questionnaire files</a></p>
 </section>
 <section id="sample-flow" class="level3">
 <h3 class="anchored" data-anchor-id="sample-flow">Sample flow</h3>
@@ -2274,7 +2274,7 @@ vertical-align: -.125em;
 </section>
 <section id="survey-design-and-statistical-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="survey-design-and-statistical-analysis">Survey design and statistical analysis</h3>
-<p>We created a survey design in R with <code>survey::svydesign()</code> using masked primary sampling units (<code>SDMVPSU</code>), masked strata (<code>SDMVSTRA</code>), and four-year Mobile Examination Center weights (<code>WTMEC2YR / 2</code>), with <code>nest = TRUE</code>. We built the design on participants with valid examination weights and design variables, then used <code>subset()</code> on the design object for the analytic base sample and for each test-specific analysis. <a href="https://wwwn.cdc.gov/nchs/nhanes/tutorials/weighting.aspx">CDC guidance on combining survey cycles</a></p>
+<p>We created a survey design in R with <code>survey::svydesign()</code> using masked primary sampling units (<code>SDMVPSU</code>), masked strata (<code>SDMVSTRA</code>), and four-year Mobile Examination Center weights (<code>WTMEC2YR / 2</code>), with <code>nest = TRUE</code>. We built the design using all participants with positive examination weights and complete design variables. We then used <code>subset()</code> on the <code>svydesign</code> object to restrict the analysis to the analytic base sample and again to participants with a score on each test. This approach preserves the survey design information needed to estimate standard errors. <a href="https://wwwn.cdc.gov/nchs/nhanes/tutorials/weighting.aspx">CDC guidance on combining survey cycles</a></p>
 <p>We summarized participant characteristics with <code>gtsummary::tbl_svysummary()</code> and plotted survey-weighted means and 95% confidence intervals by PHQ-9 category. We fit a separate survey-weighted linear regression with <code>survey::svyglm()</code> for each test, adjusting for age in years, sex, education, and race and ethnicity. We report the adjusted difference in score per one-point higher PHQ-9, with a 95% Wald confidence interval and a two-sided p-value. <a href="https://search.r-project.org/CRAN/refmans/survey/help/svyglm.html">Documentation for survey-weighted regression</a></p>
 </section>
 </section>
@@ -2459,7 +2459,7 @@ Table 1: Participant characteristics by PHQ-9 category
 </div>
 </div>
 <p><em>Continuous variables are shown as weighted means (weighted standard deviations). Categorical variables are shown as unweighted counts (weighted column percentages). Header and missing-score counts are unweighted.</em></p>
-<p>In the adjusted models, a higher PHQ-9 score was associated with lower scores on all four tests.</p>
+<p>The cognitive scores were kept in their original, unstandardized units. In the adjusted models, a one-point higher PHQ-9 score was associated with 0.068 fewer words on CERAD learning, 0.033 fewer words on CERAD delayed recall, 0.126 fewer animals named on animal fluency, and 0.601 fewer correctly matched symbols on the DSST.</p>
 <div class="table-responsive">
 <div class="cell">
 <div id="tbl-regressions" class="cell quarto-float quarto-figure quarto-figure-center anchored">
@@ -2473,7 +2473,8 @@ Table 2: Adjusted associations between PHQ-9 and cognitive test scores
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">Cognitive test</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Beta</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">β</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Unit per 1-point higher PHQ-9</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">95% CI</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">p-value</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Unweighted n</th>
@@ -2483,6 +2484,7 @@ Table 2: Adjusted associations between PHQ-9 and cognitive test scores
 <tr class="odd">
 <td style="text-align: left;">CERAD learning</td>
 <td style="text-align: right;">-0.068</td>
+<td style="text-align: left;">words</td>
 <td style="text-align: right;">-0.128 to -0.007</td>
 <td style="text-align: right;">0.030</td>
 <td style="text-align: right;">3,037</td>
@@ -2490,6 +2492,7 @@ Table 2: Adjusted associations between PHQ-9 and cognitive test scores
 <tr class="even">
 <td style="text-align: left;">CERAD delayed recall</td>
 <td style="text-align: right;">-0.033</td>
+<td style="text-align: left;">words</td>
 <td style="text-align: right;">-0.061 to -0.005</td>
 <td style="text-align: right;">0.023</td>
 <td style="text-align: right;">3,034</td>
@@ -2497,6 +2500,7 @@ Table 2: Adjusted associations between PHQ-9 and cognitive test scores
 <tr class="odd">
 <td style="text-align: left;">Animal fluency</td>
 <td style="text-align: right;">-0.126</td>
+<td style="text-align: left;">animals</td>
 <td style="text-align: right;">-0.192 to -0.060</td>
 <td style="text-align: right;">&lt; 0.001</td>
 <td style="text-align: right;">3,019</td>
@@ -2504,6 +2508,7 @@ Table 2: Adjusted associations between PHQ-9 and cognitive test scores
 <tr class="even">
 <td style="text-align: left;">Digit Symbol Substitution Test</td>
 <td style="text-align: right;">-0.601</td>
+<td style="text-align: left;">symbols</td>
 <td style="text-align: right;">-0.813 to -0.389</td>
 <td style="text-align: right;">&lt; 0.001</td>
 <td style="text-align: right;">2,941</td>
@@ -2516,6 +2521,7 @@ Table 2: Adjusted associations between PHQ-9 and cognitive test scores
 </div>
 </div>
 </div>
+<p><em>Coefficients (β) and 95% confidence intervals are expressed in the original, unstandardized test-score units per 1-point higher PHQ-9.</em></p>
 <div id="fig-cerad" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two panels show CERAD learning and delayed recall means with 95% confidence intervals across three PHQ-9 categories.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cerad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
