@@ -2,14 +2,18 @@
 
 ## About this repository
 
-This project was built in about one hour with an agentic AI workflow (OpenAI Codex as the
-coding agent and Anthropic Claude as the reviewer). I defined the research question, reviewed
-and approved each analytic decision, and verified the results. AGENTS.md contains the
-instructions the AI agent followed.
+This project was built in about one hour with an agentic AI workflow. An AI coding agent
+(OpenAI Codex) wrote the code, and an AI assistant (Anthropic Claude) proposed the analysis
+plan and reviewed each step.
 
-Are greater depressive symptoms associated with poorer cognitive test performance among U.S. adults aged 60 years or older?
+My role as project lead:
+- Selected the research question, aligned with my interest in neuroscience.
+- Reviewed and approved every analytic plan before any code was written.
+- Questioned data choices (e.g., whether newer NHANES cycles with cognitive data were available).
+- Requested revisions after reviewing the report (effect units, sample description, p-value format).
+- Verified the final results and published the repository.
 
-[Read the full report](https://drabrahamvalles.github.io/nhanes-depression-cognition-ai-pipeline/) · [View the GitHub repository](https://github.com/drabrahamvalles/nhanes-depression-cognition-ai-pipeline)
+AGENTS.md contains the instructions the AI agent followed.
 
 ## Data and methods
 
